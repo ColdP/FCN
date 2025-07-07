@@ -4,253 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>即时聊天</title>
-    
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-    <style>
-        /* Material 3 Expressive Style Customizations */
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .m3-surface { background-color: #FEF7FF; }
-        .m3-surface-container { background-color: #F3EDF7; }
-        .m3-primary { background-color: #6750A4; color: #FFFFFF; }
-        .m3-primary-container { background-color: #EADDFF; color: #21005D; }
-        .m3-secondary-container { background-color: #E8DEF8; color: #4A4458; }
-        .m3-tertiary-container { background-color: #FFD8E4; color: #31111D; }
-        .m3-outline { border-color: #79747E; }
-        .m3-scrim { background-color: rgba(0, 0, 0, 0.4); }
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Custom scrollbar for chat area */
-        .chat-scroll::-webkit-scrollbar { width: 6px; }
-        .chat-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
-        .chat-scroll::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-
-        /* Animation for modals */
-        .modal-enter { animation: fadeIn 0.3s ease-out; }
-        .modal-leave { animation: fadeOut 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
-    </style>
-</head>
-<body class="m3-surface-container text-gray-800">
-
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
-        <div class="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-    </div>
-
-    <!-- Auth Container -->
-    <div id="auth-container" class="min-h-screen flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-md space-y-4">
-            <!-- Login Form -->
-            <div id="login-view" class="m3-surface p-8 rounded-3xl shadow-lg">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-2">欢迎回来</h2>
-                <p class="text-center text-gray-600 mb-6">登录以继续聊天</p>
-                <form id="login-form" class="space-y-4">
-                    <input type="email" id="login-email" placeholder="电子邮箱" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <input type="password" id="login-password" placeholder="密码" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <div class="flex items-center justify-between text-sm">
-                        <label class="flex items-center gap-2 text-gray-600"><input type="checkbox" id="remember-me" class="rounded">记住我</label>
-                        <a href="#" id="forgot-password-link" class="font-medium text-blue-600 hover:text-blue-500">忘记密码？</a>
-                    </div>
-                    <button type="submit" class="w-full m3-primary font-bold py-3 rounded-xl shadow-md hover:opacity-90 transition transform hover:scale-105">登录</button>
-                </form>
-                <p class="text-center text-sm text-gray-600 mt-6">
-                    还没有账户？ <a href="#" id="show-register-link" class="font-medium text-blue-600 hover:text-blue-500">立即注册</a>
-                </p>
-            </div>
-
-            <!-- Register Form -->
-            <div id="register-view" class="m3-surface p-8 rounded-3xl shadow-lg hidden">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-2">创建账户</h2>
-                <p class="text-center text-gray-600 mb-6">加入我们，开始聊天吧！</p>
-                <form id="register-form" class="space-y-4">
-                    <input type="text" id="register-username" placeholder="用户名" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <input type="email" id="register-email" placeholder="电子邮箱" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <input type="password" id="register-password" placeholder="密码 (至少6位)" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <button type="submit" class="w-full m3-primary font-bold py-3 rounded-xl shadow-md hover:opacity-90 transition transform hover:scale-105">注册</button>
-                </form>
-                <p class="text-center text-sm text-gray-600 mt-6">
-                    已有账户？ <a href="#" id="show-login-link" class="font-medium text-blue-600 hover:text-blue-500">返回登录</a>
-                </p>
-            </div>
-             <!-- Forgot Password Form -->
-            <div id="forgot-password-view" class="m3-surface p-8 rounded-3xl shadow-lg hidden">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-2">重置密码</h2>
-                <p class="text-center text-gray-600 mb-6">我们将发送一封邮件来重置您的密码</p>
-                <form id="forgot-password-form" class="space-y-4">
-                    <input type="email" id="forgot-email" placeholder="输入您的电子邮箱" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                    <button type="submit" class="w-full m3-primary font-bold py-3 rounded-xl shadow-md hover:opacity-90 transition transform hover:scale-105">发送重置邮件</button>
-                </form>
-                <p class="text-center text-sm text-gray-600 mt-6">
-                    <a href="#" id="back-to-login-link" class="font-medium text-blue-600 hover:text-blue-500">返回登录</a>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App Container -->
-    <div id="app-container" class="h-screen w-screen flex hidden">
-        <!-- Left Panel: Friends List -->
-        <aside class="w-full md:w-1/3 lg:w-1/4 h-full m3-surface flex flex-col border-r border-gray-200">
-            <header class="p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-3">
-                    <img id="currentUserAvatar" src="https://placehold.co/40x40/EADDFF/21005D?text=U" class="w-10 h-10 rounded-full object-cover cursor-pointer" onclick="showModal('profile-modal')">
-                    <h2 id="currentUserDisplayName" class="text-lg font-bold">...</h2>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="showModal('requests-modal')" class="p-2 rounded-full hover:bg-gray-200 transition relative">
-                        <span class="material-symbols-outlined">group_add</span>
-                        <span id="requests-badge" class="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden"></span>
-                    </button>
-                    <button id="logout-button" class="p-2 rounded-full hover:bg-gray-200 transition">
-                        <span class="material-symbols-outlined">logout</span>
-                    </button>
-                </div>
-            </header>
-            <div class="p-4 shrink-0">
-                 <button onclick="showModal('add-friend-modal')" class="w-full flex items-center justify-center gap-2 m3-primary-container font-semibold py-3 rounded-xl hover:opacity-90 transition">
-                    <span class="material-symbols-outlined">add</span>
-                    添加好友
-                </button>
-            </div>
-            <nav id="friends-list" class="flex-grow overflow-y-auto p-2 space-y-1">
-                <!-- Friend items will be dynamically inserted here -->
-            </nav>
-        </aside>
-
-        <!-- Center Panel: Chat Window -->
-        <main id="chat-window" class="w-full md:w-2/3 lg:w-3/4 h-full flex flex-col bg-white">
-            <div id="welcome-screen" class="flex flex-col items-center justify-center h-full text-center p-8">
-                <span class="material-symbols-outlined text-8xl text-gray-300">chat</span>
-                <h2 class="mt-4 text-2xl font-bold text-gray-700">欢迎来到即时聊天</h2>
-                <p class="mt-2 text-gray-500">从左侧选择一位好友开始聊天，或添加新好友。</p>
-            </div>
-            <div id="chat-view" class="h-full flex-col hidden">
-                <header class="p-4 border-b border-gray-200 flex items-center gap-4 shrink-0">
-                    <img id="chat-friend-avatar" src="https://placehold.co/40x40/EADDFF/21005D?text=F" class="w-10 h-10 rounded-full object-cover">
-                    <div>
-                        <h3 id="chat-friend-name" class="font-bold">...</h3>
-                        <p id="chat-friend-status" class="text-sm text-gray-500">在线</p>
-                    </div>
-                </header>
-                <div id="messages-container" class="flex-grow p-4 overflow-y-auto chat-scroll space-y-4 bg-gray-50">
-                    <!-- Messages will be dynamically inserted here -->
-                </div>
-                <footer class="p-4 shrink-0 bg-white border-t border-gray-200">
-                    <form id="message-form" class="flex items-center gap-3">
-                        <input type="text" id="message-input" placeholder="输入消息..." autocomplete="off" class="w-full px-4 py-3 bg-gray-100 rounded-full border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                        <button type="submit" class="m3-primary p-3 rounded-full shadow-md hover:opacity-90 transition transform hover:scale-105">
-                            <span class="material-symbols-outlined !text-white">send</span>
-                        </button>
-                    </form>
-                </footer>
-            </div>
-        </main>
-    </div>
-
-    <!-- Modals -->
-    <div id="modal-backdrop" class="fixed inset-0 m3-scrim z-10 hidden" onclick="closeAllModals()"></div>
-
-    <!-- Add Friend Modal -->
-    <div id="add-friend-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md m3-surface rounded-3xl shadow-2xl p-6 z-20 hidden">
-        <h3 class="text-xl font-bold mb-4">添加好友</h3>
-        <form id="add-friend-form">
-            <p class="text-sm text-gray-600 mb-2">通过对方的电子邮箱发送好友申请。</p>
-            <input type="email" id="add-friend-email" placeholder="好友的电子邮箱" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-            <div class="mt-6 flex justify-end gap-2">
-                <button type="button" onclick="closeModal('add-friend-modal')" class="px-4 py-2 rounded-full hover:bg-gray-200 transition">取消</button>
-                <button type="submit" class="px-6 py-2 m3-primary rounded-full font-semibold">发送申请</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Friend Requests Modal -->
-    <div id="requests-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md m3-surface rounded-3xl shadow-2xl p-6 z-20 hidden">
-        <h3 class="text-xl font-bold mb-4">好友申请</h3>
-        <div id="requests-list" class="space-y-3 max-h-80 overflow-y-auto">
-            <!-- Request items will be dynamically inserted here -->
-            <p id="no-requests-text" class="text-gray-500">暂无好友申请。</p>
-        </div>
-        <div class="mt-6 flex justify-end">
-            <button type="button" onclick="closeModal('requests-modal')" class="px-6 py-2 m3-primary rounded-full font-semibold">关闭</button>
-        </div>
-    </div>
-
-    <!-- User Profile Modal -->
-    <div id="profile-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md m3-surface rounded-3xl shadow-2xl p-6 z-20 hidden">
-        <h3 class="text-xl font-bold mb-4">编辑个人资料</h3>
-        <form id="profile-form">
-            <div class="flex flex-col items-center mb-4">
-                <img id="profile-avatar-preview" src="https://placehold.co/100x100/EADDFF/21005D?text=U" class="w-24 h-24 rounded-full object-cover mb-2">
-                <input type="file" id="avatar-upload" accept="image/*" class="hidden">
-                <label for="avatar-upload" class="cursor-pointer text-blue-600 hover:text-blue-500 text-sm font-medium">更换头像</label>
-            </div>
-            <div class="space-y-4">
-                 <input type="text" id="profile-username" placeholder="用户名" required class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition">
-                 <textarea id="profile-bio" placeholder="个人简介" rows="3" class="w-full px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:bg-white focus:border-blue-500 outline-none transition"></textarea>
-            </div>
-            <div class="mt-6 flex justify-end gap-2">
-                <button type="button" onclick="closeModal('profile-modal')" class="px-4 py-2 rounded-full hover:bg-gray-200 transition">取消</button>
-                <button type="submit" class="px-6 py-2 m3-primary rounded-full font-semibold">保存</button>
-            </div>
-        </form>
-    </div>
-    
-    <!-- Custom Alert/Toast -->
-    <div id="toast-notification" class="fixed bottom-5 right-5 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
-        <p id="toast-message">消息</p>
-    </div>
-
-    <!-- Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { 
             getAuth, 
-            onAuthStateChanged, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut,
-            sendPasswordResetEmail,
+            onAuthStateChanged,
             setPersistence,
+            browserSessionPersistence,
             browserLocalPersistence,
-            browserSessionPersistence
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { 
-            getFirestore,
-            doc,
-            setDoc,
-            getDoc,
-            updateDoc,
-            arrayUnion,
-            arrayRemove,
-            collection,
-            query,
-            where,
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            collection, 
+            query, 
+            where, 
+            getDocs,
             onSnapshot,
             addDoc,
             serverTimestamp,
-            orderBy,
-            deleteDoc,
-            writeBatch
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // IMPORTANT: Replace with your actual Firebase config
+        // 您的 Firebase 配置信息
         const firebaseConfig = {
             apiKey: "AIzaSyD7RPa3sBP4p2hFqLQh_RVxunaFEsYzSi8",
             authDomain: "friend-chat-network.firebaseapp.com",
@@ -261,540 +54,919 @@
             measurementId: "G-PEZ2E315ZT"
         };
 
-        // Initialize Firebase
+        // 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global state
-        let currentUser = null;
-        let currentChatId = null;
-        let friendsUnsubscribe = null;
-        let requestsUnsubscribe = null;
-        let messagesUnsubscribe = null;
+        // 将核心变量挂载到 window 对象，以便在 HTML 事件处理程序中访问
+        window.firebase = {
+            auth,
+            db,
+            onAuthStateChanged,
+            setPersistence,
+            browserSessionPersistence,
+            browserLocalPersistence,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            sendPasswordResetEmail,
+            doc,
+            setDoc,
+            getDoc,
+            collection,
+            query,
+            where,
+            getDocs,
+            onSnapshot,
+            addDoc,
+            serverTimestamp,
+            orderBy
+        };
+    </script>
 
-        // UI Elements
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const authContainer = document.getElementById('auth-container');
-        const appContainer = document.getElementById('app-container');
-        const loginView = document.getElementById('login-view');
-        const registerView = document.getElementById('register-view');
-        const forgotPasswordView = document.getElementById('forgot-password-view');
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const chatView = document.getElementById('chat-view');
-
-        // --- Toast Notification ---
-        function showToast(message, duration = 3000) {
-            const toast = document.getElementById('toast-notification');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, duration);
+    <style>
+        /* Material 3 Expressive 主题颜色和字体 */
+        :root {
+            --md-sys-color-primary: #6D28D9; /* Deep Purple */
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-secondary: #9333EA; /* Bright Purple */
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: #F3E8FF;
+            --md-sys-color-on-secondary-container: #251431;
+            --md-sys-color-tertiary: #DB2777; /* Pink */
+            --md-sys-color-on-tertiary: #FFFFFF;
+            --md-sys-color-tertiary-container: #FFD8E4;
+            --md-sys-color-on-tertiary-container: #3E001E;
+            --md-sys-color-error: #B3261E;
+            --md-sys-color-background: #FEF7FF;
+            --md-sys-color-on-background: #1D1B20;
+            --md-sys-color-surface: #FEF7FF;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface-variant: #49454F;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-surface-container-highest: #E6E0E9;
         }
 
-        // --- Modal Management ---
-        const modalBackdrop = document.getElementById('modal-backdrop');
-        function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modalBackdrop.classList.remove('hidden');
-            modal.classList.remove('hidden');
-            modal.classList.remove('modal-leave');
-            modal.classList.add('modal-enter');
-        }
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.remove('modal-enter');
-            modal.classList.add('modal-leave');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                // Hide backdrop only if all modals are hidden
-                if (!document.querySelector('.z-20:not(.hidden)')) {
-                    modalBackdrop.classList.add('hidden');
-                }
-            }, 300);
-        }
-        function closeAllModals() {
-            document.querySelectorAll('.z-20').forEach(modal => closeModal(modal.id));
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
         }
 
-        // --- Auth View Switching ---
-        document.getElementById('show-register-link').addEventListener('click', (e) => { e.preventDefault(); loginView.classList.add('hidden'); registerView.classList.remove('hidden'); });
-        document.getElementById('show-login-link').addEventListener('click', (e) => { e.preventDefault(); registerView.classList.add('hidden'); loginView.classList.remove('hidden'); });
-        document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); loginView.classList.add('hidden'); forgotPasswordView.classList.remove('hidden'); });
-        document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); forgotPasswordView.classList.add('hidden'); loginView.classList.remove('hidden'); });
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
 
-        // --- Authentication Logic ---
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                currentUser = user;
-                authContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                appContainer.classList.add('flex');
-                loadingSpinner.classList.add('hidden');
-                initializeAppUI(user.uid);
-            } else {
-                currentUser = null;
-                appContainer.classList.add('hidden');
-                appContainer.classList.remove('flex');
-                authContainer.classList.remove('hidden');
-                loadingSpinner.classList.add('hidden');
-                cleanupListeners(); // Stop listening to data when logged out
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--md-sys-color-primary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--md-sys-color-secondary);
+        }
+
+        /* 界面切换动画 */
+        .view {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 移动端响应式：聊天界面 */
+        @media (max-width: 768px) {
+            #chat-view .chat-sidebar {
+                position: absolute;
+                left: -100%;
+                transition: left 0.3s ease-in-out;
+                z-index: 40;
+                height: 100%;
             }
+            #chat-view .chat-sidebar.open {
+                left: 0;
+            }
+            #chat-view .chat-main {
+                width: 100%;
+            }
+            #chat-overlay {
+                display: none;
+            }
+            #chat-overlay.open {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 30;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden">
+
+    <!-- 加载指示器 -->
+    <div id="loader" class="fixed inset-0 bg-white/80 z-[999] flex items-center justify-center backdrop-blur-sm">
+        <div class="flex flex-col items-center gap-4">
+            <svg class="animate-spin h-10 w-10 text-[var(--md-sys-color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-lg font-medium text-[var(--md-sys-color-on-background)]">加载中...</p>
+        </div>
+    </div>
+
+    <!-- 登录视图 -->
+    <div id="login-view" class="view h-full w-full flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-[var(--md-sys-color-surface)] p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-[var(--md-sys-color-primary)]">chat_bubble</span>
+                <h1 class="text-3xl font-bold text-[var(--md-sys-color-on-surface)] mt-2">欢迎回来</h1>
+                <p class="text-[var(--md-sys-color-on-surface-variant)]">登录以继续您的聊天</p>
+            </div>
+            <div id="login-error" class="hidden text-red-500 bg-red-100 p-3 rounded-lg text-sm"></div>
+            <div class="space-y-4">
+                <input id="login-email" type="email" placeholder="邮箱" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-primary)] focus:outline-none transition">
+                <input id="login-password" type="password" placeholder="密码" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-primary)] focus:outline-none transition">
+            </div>
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 text-[var(--md-sys-color-on-surface-variant)] cursor-pointer">
+                    <input id="remember-me" type="checkbox" class="rounded text-[var(--md-sys-color-primary)] focus:ring-[var(--md-sys-color-primary)]">
+                    记住我
+                </label>
+                <a href="#" onclick="showView('forgot-password-view')" class="font-medium text-[var(--md-sys-color-primary)] hover:text-[var(--md-sys-color-secondary)]">忘记密码?</a>
+            </div>
+            <div>
+                <button onclick="handleLogin()" class="w-full bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] py-3 rounded-full font-bold text-lg shadow-lg hover:bg-[var(--md-sys-color-secondary)] transition-transform transform hover:scale-105">
+                    登录
+                </button>
+            </div>
+            <p class="text-center text-sm text-[var(--md-sys-color-on-surface-variant)]">
+                还没有账户? <a href="#" onclick="showView('register-view')" class="font-medium text-[var(--md-sys-color-primary)] hover:text-[var(--md-sys-color-secondary)]">立即注册</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 注册视图 -->
+    <div id="register-view" class="view h-full w-full flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-[var(--md-sys-color-surface)] p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-[var(--md-sys-color-tertiary)]">person_add</span>
+                <h1 class="text-3xl font-bold text-[var(--md-sys-color-on-surface)] mt-2">创建账户</h1>
+                <p class="text-[var(--md-sys-color-on-surface-variant)]">加入我们，开始聊天吧！</p>
+            </div>
+            <div id="register-error" class="hidden text-red-500 bg-red-100 p-3 rounded-lg text-sm"></div>
+            <div class="space-y-4">
+                <input id="register-username" type="text" placeholder="用户名" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-tertiary)] focus:outline-none transition">
+                <input id="register-email" type="email" placeholder="邮箱" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-tertiary)] focus:outline-none transition">
+                <input id="register-password" type="password" placeholder="密码 (至少6位)" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-tertiary)] focus:outline-none transition">
+            </div>
+            <div>
+                <button onclick="handleRegister()" class="w-full bg-[var(--md-sys-color-tertiary)] text-[var(--md-sys-color-on-tertiary)] py-3 rounded-full font-bold text-lg shadow-lg hover:bg-pink-700 transition-transform transform hover:scale-105">
+                    注册
+                </button>
+            </div>
+            <p class="text-center text-sm text-[var(--md-sys-color-on-surface-variant)]">
+                已经有账户了? <a href="#" onclick="showView('login-view')" class="font-medium text-[var(--md-sys-color-tertiary)] hover:text-pink-700">返回登录</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 忘记密码视图 -->
+    <div id="forgot-password-view" class="view h-full w-full flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-[var(--md-sys-color-surface)] p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-[var(--md-sys-color-secondary)]">lock_reset</span>
+                <h1 class="text-3xl font-bold text-[var(--md-sys-color-on-surface)] mt-2">重置密码</h1>
+                <p class="text-[var(--md-sys-color-on-surface-variant)]">我们将发送一封邮件来重置您的密码</p>
+            </div>
+            <div id="forgot-message" class="hidden p-3 rounded-lg text-sm"></div>
+            <div class="space-y-4">
+                <input id="forgot-email" type="email" placeholder="输入您的注册邮箱" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl border-2 border-transparent focus:border-[var(--md-sys-color-secondary)] focus:outline-none transition">
+            </div>
+            <div>
+                <button onclick="handleForgotPassword()" class="w-full bg-[var(--md-sys-color-secondary)] text-[var(--md-sys-color-on-secondary)] py-3 rounded-full font-bold text-lg shadow-lg hover:bg-purple-800 transition-transform transform hover:scale-105">
+                    发送重置邮件
+                </button>
+            </div>
+            <p class="text-center text-sm">
+                <a href="#" onclick="showView('login-view')" class="font-medium text-[var(--md-sys-color-secondary)] hover:text-purple-800">返回登录</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 聊天主视图 -->
+    <div id="chat-view" class="view h-screen w-screen flex hidden">
+        <div id="chat-overlay" onclick="toggleSidebar()"></div>
+        <!-- 侧边栏 -->
+        <aside class="chat-sidebar w-full md:w-1/3 lg:w-1/4 bg-[var(--md-sys-color-surface-container-highest)] flex flex-col h-full border-r border-[var(--md-sys-color-surface-variant)]">
+            <!-- 侧边栏头部 -->
+            <header class="p-4 border-b border-[var(--md-sys-color-surface-variant)] flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="openModal('profile-modal')">
+                    <img id="sidebar-avatar" src="https://placehold.co/40x40/EADDFF/21005D?text=U" class="w-10 h-10 rounded-full object-cover">
+                    <span id="sidebar-username" class="font-bold text-lg text-[var(--md-sys-color-on-surface)]">...</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openModal('add-friend-modal')" class="p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]" title="添加好友">
+                        <span class="material-symbols-outlined text-[var(--md-sys-color-on-surface-variant)]">person_add</span>
+                    </button>
+                    <button onclick="openModal('requests-modal')" class="p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)] relative" title="好友申请">
+                        <span class="material-symbols-outlined text-[var(--md-sys-color-on-surface-variant)]">notifications</span>
+                        <span id="requests-badge" class="absolute top-0 right-0 w-4 h-4 bg-[var(--md-sys-color-tertiary)] text-white text-xs rounded-full flex items-center justify-center hidden"></span>
+                    </button>
+                    <button onclick="handleLogout()" class="p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]" title="退出登录">
+                        <span class="material-symbols-outlined text-[var(--md-sys-color-on-surface-variant)]">logout</span>
+                    </button>
+                </div>
+            </header>
+            <!-- 好友列表 -->
+            <div id="friend-list" class="flex-1 overflow-y-auto p-2 space-y-1">
+                <!-- 好友条目将在这里动态生成 -->
+            </div>
+        </aside>
+
+        <!-- 主聊天区 -->
+        <main id="chat-main" class="chat-main flex-1 flex flex-col h-screen bg-[var(--md-sys-color-surface)]">
+            <!-- 欢迎界面 -->
+            <div id="welcome-screen" class="flex-1 flex flex-col items-center justify-center text-center p-8">
+                <span class="material-symbols-outlined text-9xl text-[var(--md-sys-color-primary-container)]">forum</span>
+                <h2 class="mt-4 text-3xl font-bold text-[var(--md-sys-color-on-surface)]">开始聊天吧！</h2>
+                <p class="mt-2 text-lg text-[var(--md-sys-color-on-surface-variant)]">从左侧选择一位好友开始对话，<br>或添加新好友来扩展你的圈子。</p>
+            </div>
+            <!-- 聊天窗口 -->
+            <div id="chat-window" class="hidden flex-1 flex flex-col">
+                <!-- 聊天窗口头部 -->
+                <header class="p-4 border-b border-[var(--md-sys-color-surface-variant)] flex items-center gap-4">
+                    <button class="md:hidden p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]" onclick="toggleSidebar()">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <img id="chat-header-avatar" src="https://placehold.co/40x40/EADDFF/21005D?text=F" class="w-10 h-10 rounded-full object-cover cursor-pointer" onclick="openModal('friend-profile-modal')">
+                    <div>
+                        <h3 id="chat-header-username" class="font-bold text-lg text-[var(--md-sys-color-on-surface)] cursor-pointer" onclick="openModal('friend-profile-modal')">好友名称</h3>
+                        <p id="chat-header-status" class="text-sm text-green-500">在线</p>
+                    </div>
+                </header>
+                <!-- 消息区域 -->
+                <div id="message-list" class="flex-1 p-4 overflow-y-auto space-y-4">
+                    <!-- 消息将在这里动态生成 -->
+                </div>
+                <!-- 消息输入区 -->
+                <footer class="p-4 bg-[var(--md-sys-color-surface-container-highest)]">
+                    <div class="flex items-center gap-4">
+                        <input id="message-input" type="text" placeholder="输入消息..." class="flex-1 px-4 py-3 bg-[var(--md-sys-color-surface)] rounded-full border-2 border-transparent focus:border-[var(--md-sys-color-primary)] focus:outline-none transition">
+                        <button id="send-button" onclick="sendMessage()" class="bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)] rounded-full p-3 shadow-lg hover:bg-[var(--md-sys-color-secondary)] transition-transform transform hover:scale-110">
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模态框容器 -->
+    <div id="modal-container">
+        <!-- 个人资料模态框 -->
+        <div id="profile-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal('profile-modal', event)">
+            <div class="bg-[var(--md-sys-color-surface)] rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 relative animate-in zoom-in-90">
+                <button onclick="closeModal('profile-modal')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <h2 class="text-2xl font-bold text-center">我的资料</h2>
+                <div class="flex flex-col items-center space-y-4">
+                    <div class="relative">
+                        <img id="profile-modal-avatar" src="https://placehold.co/128x128/EADDFF/21005D?text=U" class="w-32 h-32 rounded-full object-cover border-4 border-[var(--md-sys-color-primary-container)]">
+                        <label for="avatar-upload" class="absolute bottom-0 right-0 bg-[var(--md-sys-color-primary)] text-white p-2 rounded-full cursor-pointer hover:bg-[var(--md-sys-color-secondary)] transition">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                        </label>
+                        <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label for="profile-username" class="text-sm font-medium text-[var(--md-sys-color-on-surface-variant)]">用户名</label>
+                    <input id="profile-username" type="text" class="w-full px-4 py-2 bg-[var(--md-sys-color-surface-container-highest)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)]">
+                    <label for="profile-bio" class="text-sm font-medium text-[var(--md-sys-color-on-surface-variant)]">自我介绍</label>
+                    <textarea id="profile-bio" rows="3" class="w-full px-4 py-2 bg-[var(--md-sys-color-surface-container-highest)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)]"></textarea>
+                </div>
+                <button onclick="updateProfile()" class="w-full bg-[var(--md-sys-color-primary)] text-white py-3 rounded-full font-bold">保存更改</button>
+            </div>
+        </div>
+
+        <!-- 好友资料模态框 -->
+        <div id="friend-profile-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal('friend-profile-modal', event)">
+            <div class="bg-[var(--md-sys-color-surface)] rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 relative animate-in zoom-in-90">
+                <button onclick="closeModal('friend-profile-modal')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <div class="flex flex-col items-center space-y-4">
+                    <img id="friend-profile-avatar" src="https://placehold.co/128x128/EADDFF/21005D?text=F" class="w-32 h-32 rounded-full object-cover border-4 border-[var(--md-sys-color-primary-container)]">
+                    <h2 id="friend-profile-username" class="text-3xl font-bold">好友名称</h2>
+                    <p id="friend-profile-email" class="text-sm text-[var(--md-sys-color-on-surface-variant)]">friend@example.com</p>
+                </div>
+                <div class="bg-[var(--md-sys-color-surface-container-highest)] p-4 rounded-xl">
+                    <h3 class="font-bold text-[var(--md-sys-color-on-surface-variant)]">自我介绍</h3>
+                    <p id="friend-profile-bio" class="mt-1 text-[var(--md-sys-color-on-surface)]">这是好友的自我介绍。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加好友模态框 -->
+        <div id="add-friend-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal('add-friend-modal', event)">
+            <div class="bg-[var(--md-sys-color-surface)] rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 relative animate-in zoom-in-90">
+                <button onclick="closeModal('add-friend-modal')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <h2 class="text-2xl font-bold text-center">添加好友</h2>
+                <p class="text-center text-sm text-[var(--md-sys-color-on-surface-variant)]">通过邮箱地址发送好友申请</p>
+                <div id="add-friend-message" class="hidden p-3 rounded-lg text-sm"></div>
+                <input id="add-friend-email" type="email" placeholder="输入好友的邮箱" class="w-full px-4 py-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)]">
+                <button onclick="sendFriendRequest()" class="w-full bg-[var(--md-sys-color-primary)] text-white py-3 rounded-full font-bold">发送申请</button>
+            </div>
+        </div>
+
+        <!-- 好友申请模态框 -->
+        <div id="requests-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4" onclick="closeModal('requests-modal', event)">
+            <div class="bg-[var(--md-sys-color-surface)] rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 relative animate-in zoom-in-90 flex flex-col" style="max-height: 80vh;">
+                <button onclick="closeModal('requests-modal')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--md-sys-color-surface-variant)]">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <h2 class="text-2xl font-bold text-center">好友申请</h2>
+                <div id="request-list" class="flex-1 overflow-y-auto space-y-3 pr-2">
+                    <!-- 申请列表将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 全局变量和状态 ---
+        let currentUser = null;
+        let currentChatFriendId = null;
+        let friendListUnsubscribe = null;
+        let requestsUnsubscribe = null;
+        let chatUnsubscribe = null;
+
+        // --- DOM 元素 ---
+        const loader = document.getElementById('loader');
+        const views = {
+            login: document.getElementById('login-view'),
+            register: document.getElementById('register-view'),
+            forgot: document.getElementById('forgot-password-view'),
+            chat: document.getElementById('chat-view'),
+        };
+
+        // --- 视图管理 ---
+        const showView = (viewId) => {
+            loader.style.display = 'flex';
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+            if (views[viewId]) {
+                views[viewId].classList.remove('hidden');
+            }
+            // 短暂延迟以显示加载动画
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 300);
+        };
+        window.showView = showView; // 暴露给全局
+
+        const openModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            if (modalId === 'friend-profile-modal') {
+                loadFriendProfileIntoModal(currentChatFriendId);
+            }
+        };
+        window.openModal = openModal;
+
+        const closeModal = (modalId, event) => {
+            const modal = document.getElementById(modalId);
+            // 如果点击的是背景而不是内容，则关闭
+            if (modal && (!event || event.target === modal)) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+        window.closeModal = closeModal;
+        
+        const toggleSidebar = () => {
+            document.querySelector('.chat-sidebar').classList.toggle('open');
+            document.getElementById('chat-overlay').classList.toggle('open');
+        }
+        window.toggleSidebar = toggleSidebar;
+
+        // --- 错误/消息处理 ---
+        const showMessage = (elementId, message, isError = true) => {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.remove('hidden');
+            if (isError) {
+                el.classList.add('text-red-500', 'bg-red-100');
+                el.classList.remove('text-green-700', 'bg-green-100');
+            } else {
+                el.classList.remove('text-red-500', 'bg-red-100');
+                el.classList.add('text-green-700', 'bg-green-100');
+            }
+        };
+
+        // --- Firebase 核心逻辑 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const { auth, onAuthStateChanged } = window.firebase;
+            onAuthStateChanged(auth, user => {
+                if (user) {
+                    currentUser = user;
+                    setupRealtimeListeners(user.uid);
+                    loadUserProfile(user.uid);
+                    showView('chat');
+                } else {
+                    currentUser = null;
+                    cleanupListeners();
+                    showView('login');
+                }
+            });
         });
 
-        // Login
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loadingSpinner.classList.remove('hidden');
-            const email = document.getElementById('login-email').value;
+        // --- 认证处理 ---
+        const handleRegister = async () => {
+            const { auth, createUserWithEmailAndPassword, doc, setDoc, db } = window.firebase;
+            const username = document.getElementById('register-username').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const errorEl = document.getElementById('register-error');
+
+            if (!username || !email || password.length < 6) {
+                showMessage('register-error', '请填写所有字段，密码至少6位。');
+                return;
+            }
+
+            loader.style.display = 'flex';
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // 创建用户资料
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    username: username,
+                    email: email,
+                    bio: "嗨，我来啦！",
+                    avatar: "", // 初始为空
+                    friends: []
+                });
+                // 注册成功后直接进入聊天界面
+            } catch (error) {
+                const message = error.code === 'auth/email-already-in-use' ? '该邮箱已被注册。' : '注册失败，请重试。';
+                showMessage('register-error', message);
+                loader.style.display = 'none';
+            }
+        };
+        window.handleRegister = handleRegister;
+
+        const handleLogin = async () => {
+            const { auth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } = window.firebase;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             const rememberMe = document.getElementById('remember-me').checked;
             
+            if (!email || !password) {
+                showMessage('login-error', '请输入邮箱和密码。');
+                return;
+            }
+
+            loader.style.display = 'flex';
             try {
                 const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
                 await setPersistence(auth, persistence);
                 await signInWithEmailAndPassword(auth, email, password);
-                showToast('登录成功！');
+                // onAuthStateChanged 会处理后续跳转
             } catch (error) {
-                console.error("Login error:", error);
-                showToast(`登录失败: ${error.message}`);
-                loadingSpinner.classList.add('hidden');
+                const message = (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential')
+                    ? '邮箱或密码错误。'
+                    : '登录失败，请重试。';
+                showMessage('login-error', message);
+                loader.style.display = 'none';
             }
-        });
+        };
+        window.handleLogin = handleLogin;
 
-        // Register
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loadingSpinner.classList.remove('hidden');
-            const username = document.getElementById('register-username').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Create user profile in Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    displayName: username,
-                    email: user.email,
-                    bio: "嗨，我正在使用这个超酷的聊天应用！",
-                    avatarBase64: null,
-                    friends: []
-                });
-                showToast('注册成功，欢迎！');
-            } catch (error) {
-                console.error("Registration error:", error);
-                showToast(`注册失败: ${error.message}`);
-                loadingSpinner.classList.add('hidden');
-            }
-        });
+        const handleLogout = async () => {
+            const { auth, signOut } = window.firebase;
+            await signOut(auth);
+            // onAuthStateChanged 会处理后续跳转
+        };
+        window.handleLogout = handleLogout;
         
-        // Forgot Password
-        document.getElementById('forgot-password-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loadingSpinner.classList.remove('hidden');
-            const email = document.getElementById('forgot-email').value;
+        const handleForgotPassword = async () => {
+            const { auth, sendPasswordResetEmail } = window.firebase;
+            const email = document.getElementById('forgot-email').value.trim();
+            const messageEl = document.getElementById('forgot-message');
+
+            if (!email) {
+                showMessage('forgot-message', '请输入您的邮箱地址。', true);
+                return;
+            }
+            
+            loader.style.display = 'flex';
             try {
                 await sendPasswordResetEmail(auth, email);
-                showToast('密码重置邮件已发送，请检查您的邮箱。');
-                loadingSpinner.classList.add('hidden');
-                forgotPasswordView.classList.add('hidden');
-                loginView.classList.remove('hidden');
+                showMessage('forgot-message', '重置邮件已发送，请检查您的收件箱。', false);
             } catch (error) {
-                console.error("Forgot password error:", error);
-                showToast(`发送失败: ${error.message}`);
-                loadingSpinner.classList.add('hidden');
+                showMessage('forgot-message', '发送失败，请检查邮箱地址是否正确。', true);
+            } finally {
+                loader.style.display = 'none';
             }
-        });
+        };
+        window.handleForgotPassword = handleForgotPassword;
 
-        // Logout
-        document.getElementById('logout-button').addEventListener('click', async () => {
-            await signOut(auth);
-            showToast('您已退出登录。');
-            welcomeScreen.classList.remove('hidden');
-            chatView.classList.add('hidden');
-            currentChatId = null;
-        });
-
-        // --- Main App UI Initialization ---
-        async function initializeAppUI(uid) {
+        // --- 用户资料 ---
+        const loadUserProfile = async (uid) => {
+            const { db, doc, getDoc } = window.firebase;
             const userDoc = await getDoc(doc(db, "users", uid));
             if (userDoc.exists()) {
                 const userData = userDoc.data();
-                document.getElementById('currentUserDisplayName').textContent = userData.displayName;
-                document.getElementById('currentUserAvatar').src = userData.avatarBase64 || `https://placehold.co/40x40/EADDFF/21005D?text=${userData.displayName[0]}`;
-                
-                // Set profile modal fields
-                document.getElementById('profile-username').value = userData.displayName;
+                // 侧边栏
+                document.getElementById('sidebar-avatar').src = userData.avatar || `https://placehold.co/40x40/EADDFF/21005D?text=${userData.username.charAt(0).toUpperCase()}`;
+                document.getElementById('sidebar-username').textContent = userData.username;
+                // 个人资料模态框
+                document.getElementById('profile-modal-avatar').src = userData.avatar || `https://placehold.co/128x128/EADDFF/21005D?text=${userData.username.charAt(0).toUpperCase()}`;
+                document.getElementById('profile-username').value = userData.username;
                 document.getElementById('profile-bio').value = userData.bio;
-                document.getElementById('profile-avatar-preview').src = userData.avatarBase64 || `https://placehold.co/100x100/EADDFF/21005D?text=${userData.displayName[0]}`;
-
-                // Start listening for data
-                listenForFriends(uid);
-                listenForFriendRequests(uid);
             }
-        }
+        };
+        
+        const handleAvatarUpload = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
 
-        function cleanupListeners() {
-            if (friendsUnsubscribe) friendsUnsubscribe();
-            if (requestsUnsubscribe) requestsUnsubscribe();
-            if (messagesUnsubscribe) messagesUnsubscribe();
-        }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 256;
+                    const MAX_HEIGHT = 256;
+                    let width = img.width;
+                    let height = img.height;
 
-        // --- Profile Management ---
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loadingSpinner.classList.remove('hidden');
-            const newUsername = document.getElementById('profile-username').value;
-            const newBio = document.getElementById('profile-bio').value;
-            const avatarFile = document.getElementById('avatar-upload').files[0];
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
 
-            const updateData = {
-                displayName: newUsername,
-                bio: newBio,
+                    // 压缩并转换为 base64
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    document.getElementById('profile-modal-avatar').src = dataUrl;
+                };
+                img.src = e.target.result;
             };
+            reader.readAsDataURL(file);
+        };
+        window.handleAvatarUpload = handleAvatarUpload;
 
+        const updateProfile = async () => {
+            const { db, doc, setDoc } = window.firebase;
+            const newUsername = document.getElementById('profile-username').value.trim();
+            const newBio = document.getElementById('profile-bio').value.trim();
+            const newAvatar = document.getElementById('profile-modal-avatar').src;
+
+            if (!newUsername) {
+                alert('用户名不能为空！');
+                return;
+            }
+            
+            loader.style.display = 'flex';
             try {
-                if (avatarFile) {
-                    updateData.avatarBase64 = await compressAndEncodeImage(avatarFile);
-                }
-                await updateDoc(doc(db, "users", currentUser.uid), updateData);
-                showToast('个人资料已更新！');
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    username: newUsername,
+                    bio: newBio,
+                    avatar: newAvatar.startsWith('data:image') ? newAvatar : '',
+                }, { merge: true });
+                
+                await loadUserProfile(currentUser.uid);
                 closeModal('profile-modal');
-                // Refresh UI
-                initializeAppUI(currentUser.uid);
             } catch (error) {
-                console.error("Profile update error:", error);
-                showToast('更新失败，请重试。');
+                console.error("更新资料失败: ", error);
+                alert('更新失败，请重试。');
             } finally {
-                loadingSpinner.classList.add('hidden');
+                loader.style.display = 'none';
             }
-        });
-
-        // Image compression and encoding
-        function compressAndEncodeImage(file, maxWidth = 200, quality = 0.7) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const scale = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * scale;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(ctx.canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = error => reject(error);
-                };
-                reader.onerror = error => reject(error);
-            });
+        };
+        window.updateProfile = updateProfile;
+        
+        const loadFriendProfileIntoModal = async (friendId) => {
+            if (!friendId) return;
+            const { db, doc, getDoc } = window.firebase;
+            const userDoc = await getDoc(doc(db, "users", friendId));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                document.getElementById('friend-profile-avatar').src = userData.avatar || `https://placehold.co/128x128/EADDFF/21005D?text=${userData.username.charAt(0).toUpperCase()}`;
+                document.getElementById('friend-profile-username').textContent = userData.username;
+                document.getElementById('friend-profile-email').textContent = userData.email;
+                document.getElementById('friend-profile-bio').textContent = userData.bio || '对方很神秘，什么也没留下。';
+            }
         }
-        
-        document.getElementById('avatar-upload').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('profile-avatar-preview').src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
 
-        // --- Friend System ---
-        
-        // Add Friend
-        document.getElementById('add-friend-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const friendEmail = document.getElementById('add-friend-email').value;
-            if (friendEmail === currentUser.email) {
-                showToast("不能添加自己为好友哦！");
+        // --- 好友系统 ---
+        const sendFriendRequest = async () => {
+            const { db, collection, query, where, getDocs, addDoc, doc, getDoc } = window.firebase;
+            const email = document.getElementById('add-friend-email').value.trim();
+            const messageEl = document.getElementById('add-friend-message');
+
+            if (email === currentUser.email) {
+                showMessage('add-friend-message', '不能添加自己为好友。');
                 return;
             }
 
-            loadingSpinner.classList.remove('hidden');
+            loader.style.display = 'flex';
             try {
-                // Find user by email
-                const q = query(collection(db, "users"), where("email", "==", friendEmail));
+                // 1. 查找用户
+                const q = query(collection(db, "users"), where("email", "==", email));
                 const querySnapshot = await getDocs(q);
-
+                
                 if (querySnapshot.empty) {
-                    showToast("未找到该用户。");
+                    showMessage('add-friend-message', '未找到该用户。');
                     return;
                 }
                 
-                const friendDoc = querySnapshot.docs[0];
-                const friendData = friendDoc.data();
-                
-                // Check if already friends
-                const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-                if (userDoc.data().friends.includes(friendData.uid)) {
-                    showToast("你们已经是好友了。");
+                const friendData = querySnapshot.docs[0].data();
+                const friendId = friendData.uid;
+
+                // 2. 检查是否已经是好友
+                const currentUserDoc = await getDoc(doc(db, "users", currentUser.uid));
+                if (currentUserDoc.data().friends.includes(friendId)) {
+                    showMessage('add-friend-message', '你们已经是好友了。', false);
                     return;
                 }
 
-                // Check if a request already exists
-                const q1 = query(collection(db, "friendRequests"), where("fromUid", "==", currentUser.uid), where("toUid", "==", friendData.uid));
-                const q2 = query(collection(db, "friendRequests"), where("fromUid", "==", friendData.uid), where("toUid", "==", currentUser.uid));
-                const [req1Snap, req2Snap] = await Promise.all([getDocs(q1), getDocs(q2)]);
-                if (!req1Snap.empty || !req2Snap.empty) {
-                     showToast("已存在待处理的好友申请。");
-                     return;
+                // 3. 检查是否已发送过请求
+                const qRequest = query(collection(db, "friendRequests"), 
+                    where("from", "==", currentUser.uid), 
+                    where("to", "==", friendId));
+                const requestSnapshot = await getDocs(qRequest);
+                if (!requestSnapshot.empty) {
+                    showMessage('add-friend-message', '您已发送过请求，请耐心等待。', false);
+                    return;
                 }
 
-                // Create friend request
+                // 4. 发送请求
                 await addDoc(collection(db, "friendRequests"), {
-                    fromUid: currentUser.uid,
-                    fromEmail: currentUser.email,
-                    toUid: friendData.uid,
-                    toEmail: friendData.email,
+                    from: currentUser.uid,
+                    to: friendId,
                     status: "pending",
-                    createdAt: serverTimestamp()
+                    fromUsername: document.getElementById('sidebar-username').textContent,
+                    fromAvatar: document.getElementById('sidebar-avatar').src
                 });
-
-                showToast("好友申请已发送！");
-                closeModal('add-friend-modal');
+                showMessage('add-friend-message', '好友申请已发送！', false);
                 document.getElementById('add-friend-email').value = '';
 
             } catch (error) {
-                console.error("Add friend error:", error);
-                showToast("发送申请失败，请重试。");
+                console.error("发送好友申请失败: ", error);
+                showMessage('add-friend-message', '发送失败，请重试。');
             } finally {
-                loadingSpinner.classList.add('hidden');
+                loader.style.display = 'none';
             }
-        });
+        };
+        window.sendFriendRequest = sendFriendRequest;
 
-        // Listen for friend requests
-        function listenForFriendRequests(uid) {
-            const q = query(collection(db, "friendRequests"), where("toUid", "==", uid), where("status", "==", "pending"));
-            requestsUnsubscribe = onSnapshot(q, async (snapshot) => {
-                const requestsList = document.getElementById('requests-list');
-                const badge = document.getElementById('requests-badge');
-                
-                if (snapshot.empty) {
-                    requestsList.innerHTML = '<p id="no-requests-text" class="text-gray-500">暂无好友申请。</p>';
-                    badge.classList.add('hidden');
-                    badge.textContent = '0';
-                    return;
-                }
-
-                badge.classList.remove('hidden');
-                badge.textContent = snapshot.size;
-                requestsList.innerHTML = ''; // Clear list
-
-                for (const requestDoc of snapshot.docs) {
-                    const requestData = requestDoc.data();
-                    const fromUserDoc = await getDoc(doc(db, "users", requestData.fromUid));
-                    if (fromUserDoc.exists()) {
-                        const fromUserData = fromUserDoc.data();
-                        const requestEl = document.createElement('div');
-                        requestEl.className = 'flex items-center justify-between p-2 m3-secondary-container rounded-lg';
-                        requestEl.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <img src="${fromUserData.avatarBase64 || `https://placehold.co/40x40/EADDFF/21005D?text=${fromUserData.displayName[0]}`}" class="w-10 h-10 rounded-full object-cover">
-                                <div>
-                                    <p class="font-semibold">${fromUserData.displayName}</p>
-                                    <p class="text-sm text-gray-600">${fromUserData.email}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button data-id="${requestDoc.id}" data-from-uid="${requestData.fromUid}" class="accept-request-btn p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"><span class="material-symbols-outlined">done</span></button>
-                                <button data-id="${requestDoc.id}" class="reject-request-btn p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition"><span class="material-symbols-outlined">close</span></button>
-                            </div>
-                        `;
-                        requestsList.appendChild(requestEl);
-                    }
-                }
-            });
-        }
-        
-        // Handle accept/reject request
-        document.getElementById('requests-list').addEventListener('click', async (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
-
-            const requestId = target.dataset.id;
-            if (!requestId) return;
-            
-            loadingSpinner.classList.remove('hidden');
-
-            if (target.classList.contains('accept-request-btn')) {
-                const fromUid = target.dataset.fromUid;
-                try {
-                    const batch = writeBatch(db);
-                    // Add friend to both users
-                    const currentUserRef = doc(db, "users", currentUser.uid);
-                    batch.update(currentUserRef, { friends: arrayUnion(fromUid) });
-                    const friendUserRef = doc(db, "users", fromUid);
-                    batch.update(friendUserRef, { friends: arrayUnion(currentUser.uid) });
-                    // Delete the request
-                    const requestRef = doc(db, "friendRequests", requestId);
-                    batch.delete(requestRef);
-                    await batch.commit();
-                    showToast("已添加好友！");
-                } catch (error) {
-                    console.error("Accept request error:", error);
-                    showToast("操作失败，请重试。");
-                }
-            } else if (target.classList.contains('reject-request-btn')) {
-                try {
-                    await deleteDoc(doc(db, "friendRequests", requestId));
-                    showToast("已拒绝申请。");
-                } catch (error) {
-                    console.error("Reject request error:", error);
-                    showToast("操作失败，请重试。");
-                }
-            }
-            loadingSpinner.classList.add('hidden');
-        });
-
-        // Listen for friends list
-        function listenForFriends(uid) {
-            const userDocRef = doc(db, "users", uid);
-            friendsUnsubscribe = onSnapshot(userDocRef, async (docSnap) => {
-                if (!docSnap.exists()) return;
-                const userData = docSnap.data();
-                const friendUids = userData.friends || [];
-                const friendsListEl = document.getElementById('friends-list');
-                friendsListEl.innerHTML = '';
-
-                if (friendUids.length === 0) {
-                    friendsListEl.innerHTML = '<p class="text-center text-gray-500 p-4">还没有好友，快去添加吧！</p>';
-                    return;
-                }
-
-                for (const friendUid of friendUids) {
-                    const friendDoc = await getDoc(doc(db, "users", friendUid));
-                    if (friendDoc.exists()) {
-                        const friendData = friendDoc.data();
-                        const friendEl = document.createElement('div');
-                        friendEl.className = 'flex items-center gap-3 p-3 rounded-2xl hover:m3-secondary-container cursor-pointer transition';
-                        friendEl.dataset.friendUid = friendData.uid;
-                        friendEl.innerHTML = `
-                            <img src="${friendData.avatarBase64 || `https://placehold.co/48x48/EADDFF/21005D?text=${friendData.displayName[0]}`}" class="w-12 h-12 rounded-full object-cover">
-                            <div>
-                                <p class="font-bold">${friendData.displayName}</p>
-                                <p class="text-sm text-gray-600 truncate">点击开始聊天</p>
-                            </div>
-                        `;
-                        friendsListEl.appendChild(friendEl);
-                    }
-                }
-            });
-        }
-        
-        // --- Chat Logic ---
-        
-        // Select a friend to chat with
-        document.getElementById('friends-list').addEventListener('click', async (e) => {
-            const friendEl = e.target.closest('[data-friend-uid]');
-            if (!friendEl) return;
-
-            const friendUid = friendEl.dataset.friendUid;
-            
-            // Highlight selected friend
-            document.querySelectorAll('#friends-list > div').forEach(el => el.classList.remove('m3-primary-container'));
-            friendEl.classList.add('m3-primary-container');
-
-            welcomeScreen.classList.add('hidden');
-            chatView.classList.add('hidden'); // Hide first to show loading
-            loadingSpinner.classList.remove('hidden');
-
+        const handleFriendRequest = async (requestId, fromId, toId, accept) => {
+            const { db, doc, setDoc, getDoc } = window.firebase;
+            loader.style.display = 'flex';
             try {
-                const friendDoc = await getDoc(doc(db, "users", friendUid));
-                if (friendDoc.exists()) {
-                    const friendData = friendDoc.data();
-                    document.getElementById('chat-friend-name').textContent = friendData.displayName;
-                    document.getElementById('chat-friend-avatar').src = friendData.avatarBase64 || `https://placehold.co/40x40/EADDFF/21005D?text=${friendData.displayName[0]}`;
+                if (accept) {
+                    // 更新双方好友列表
+                    const userRef = doc(db, "users", toId);
+                    const friendRef = doc(db, "users", fromId);
+                    const userDoc = await getDoc(userRef);
+                    const friendDoc = await getDoc(friendRef);
+                    
+                    const userFriends = userDoc.data().friends || [];
+                    const friendFriends = friendDoc.data().friends || [];
+
+                    await setDoc(userRef, { friends: [...userFriends, fromId] }, { merge: true });
+                    await setDoc(friendRef, { friends: [...friendFriends, toId] }, { merge: true });
                 }
-
-                // Generate a consistent chat ID
-                const chatId = [currentUser.uid, friendUid].sort().join('_');
-                currentChatId = chatId;
-
-                // Listen for messages
-                listenForMessages(chatId);
-
-                chatView.classList.remove('hidden');
-                chatView.classList.add('flex');
+                // 更新请求状态
+                await setDoc(doc(db, "friendRequests", requestId), { status: accept ? 'accepted' : 'declined' }, { merge: true });
+                // 重新加载申请列表
             } catch (error) {
-                console.error("Error starting chat:", error);
-                showToast("无法加载聊天，请重试。");
+                console.error("处理好友申请失败: ", error);
+                alert('操作失败，请重试。');
             } finally {
-                loadingSpinner.classList.add('hidden');
+                loader.style.display = 'none';
             }
-        });
+        };
+        window.handleFriendRequest = handleFriendRequest;
 
-        // Listen for new messages
-        function listenForMessages(chatId) {
-            if (messagesUnsubscribe) messagesUnsubscribe(); // Stop listening to previous chat
 
-            const messagesContainer = document.getElementById('messages-container');
-            const q = query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp"));
+        // --- 实时监听器 ---
+        const setupRealtimeListeners = (uid) => {
+            const { db, collection, query, where, onSnapshot, doc } = window.firebase;
+            
+            // 监听好友列表
+            friendListUnsubscribe = onSnapshot(doc(db, "users", uid), async (doc) => {
+                if (doc.exists()) {
+                    const friendIds = doc.data().friends || [];
+                    renderFriendList(friendIds);
+                }
+            });
 
-            messagesUnsubscribe = onSnapshot(q, (snapshot) => {
-                messagesContainer.innerHTML = ''; // Clear previous messages
+            // 监听好友申请
+            const q = query(collection(db, "friendRequests"), where("to", "==", uid), where("status", "==", "pending"));
+            requestsUnsubscribe = onSnapshot(q, (snapshot) => {
+                const requests = [];
                 snapshot.forEach(doc => {
-                    const messageData = doc.data();
-                    const messageEl = document.createElement('div');
-                    const isSender = messageData.senderUid === currentUser.uid;
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+                renderRequestList(requests);
+                
+                const badge = document.getElementById('requests-badge');
+                if (requests.length > 0) {
+                    badge.textContent = requests.length;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        };
 
-                    messageEl.className = `flex items-end gap-2 max-w-xs md:max-w-md ${isSender ? 'self-end flex-row-reverse' : 'self-start'}`;
-                    
-                    // In a real app, you'd fetch the sender's avatar. For simplicity, we omit this here.
-                    
-                    messageEl.innerHTML = `
-                        <div class="p-3 rounded-2xl ${isSender ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}">
-                            <p>${messageData.text}</p>
+        const cleanupListeners = () => {
+            if (friendListUnsubscribe) friendListUnsubscribe();
+            if (requestsUnsubscribe) requestsUnsubscribe();
+            if (chatUnsubscribe) chatUnsubscribe();
+        };
+
+        // --- UI 渲染 ---
+        const renderFriendList = async (friendIds) => {
+            const { db, doc, getDoc } = window.firebase;
+            const friendListEl = document.getElementById('friend-list');
+            friendListEl.innerHTML = '';
+            if (friendIds.length === 0) {
+                friendListEl.innerHTML = `<p class="p-4 text-center text-sm text-[var(--md-sys-color-on-surface-variant)]">还没有好友，快去添加吧！</p>`;
+                return;
+            }
+            
+            for (const id of friendIds) {
+                const userDoc = await getDoc(doc(db, "users", id));
+                if (userDoc.exists()) {
+                    const friend = userDoc.data();
+                    const friendEl = document.createElement('div');
+                    friendEl.className = `flex items-center gap-4 p-3 rounded-2xl cursor-pointer hover:bg-[var(--md-sys-color-surface-variant)] transition`;
+                    friendEl.onclick = () => openChat(friend.uid);
+                    friendEl.innerHTML = `
+                        <img src="${friend.avatar || `https://placehold.co/48x48/EADDFF/21005D?text=${friend.username.charAt(0).toUpperCase()}`}" class="w-12 h-12 rounded-full object-cover">
+                        <div class="flex-1">
+                            <p class="font-bold text-[var(--md-sys-color-on-surface)]">${friend.username}</p>
+                            <p class="text-sm text-[var(--md-sys-color-on-surface-variant)] truncate">最近消息...</p>
                         </div>
                     `;
-                    messagesContainer.appendChild(messageEl);
-                });
-                // Scroll to bottom
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            });
-        }
+                    friendListEl.appendChild(friendEl);
+                }
+            }
+        };
         
-        // Send a message
-        document.getElementById('message-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const messageInput = document.getElementById('message-input');
-            const text = messageInput.value.trim();
+        const renderRequestList = (requests) => {
+            const requestListEl = document.getElementById('request-list');
+            requestListEl.innerHTML = '';
+            if (requests.length === 0) {
+                requestListEl.innerHTML = `<p class="p-4 text-center text-sm text-[var(--md-sys-color-on-surface-variant)]">没有新的好友申请</p>`;
+                return;
+            }
+            requests.forEach(req => {
+                const reqEl = document.createElement('div');
+                reqEl.className = 'flex items-center justify-between p-3 bg-[var(--md-sys-color-surface-container-highest)] rounded-xl';
+                reqEl.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${req.fromAvatar || `https://placehold.co/40x40/EADDFF/21005D?text=${req.fromUsername.charAt(0).toUpperCase()}`}" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="font-semibold">${req.fromUsername}</p>
+                            <p class="text-xs text-[var(--md-sys-color-on-surface-variant)]">请求添加你为好友</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="handleFriendRequest('${req.id}', '${req.from}', '${req.to}', true)" class="bg-green-500 text-white px-3 py-1 text-sm rounded-full font-semibold">同意</button>
+                        <button onclick="handleFriendRequest('${req.id}', '${req.from}', '${req.to}', false)" class="bg-gray-300 px-3 py-1 text-sm rounded-full font-semibold">拒绝</button>
+                    </div>
+                `;
+                requestListEl.appendChild(reqEl);
+            });
+        };
 
-            if (text === '' || !currentChatId) return;
+        // --- 聊天逻辑 ---
+        const openChat = async (friendId) => {
+            if (currentChatFriendId === friendId) return;
 
-            messageInput.value = '';
+            const { db, doc, getDoc, collection, query, orderBy, onSnapshot } = window.firebase;
+            currentChatFriendId = friendId;
+            
+            // 在移动端关闭侧边栏
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
 
+            // 清理旧的聊天监听器
+            if (chatUnsubscribe) chatUnsubscribe();
+
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('chat-window').classList.remove('hidden');
+            document.getElementById('chat-window').classList.add('flex');
+            
+            // 加载好友信息到头部
+            const friendDoc = await getDoc(doc(db, "users", friendId));
+            if (friendDoc.exists()) {
+                const friendData = friendDoc.data();
+                document.getElementById('chat-header-avatar').src = friendData.avatar || `https://placehold.co/40x40/EADDFF/21005D?text=${friendData.username.charAt(0).toUpperCase()}`;
+                document.getElementById('chat-header-username').textContent = friendData.username;
+            }
+
+            // 设置新的聊天监听器
+            const chatId = [currentUser.uid, friendId].sort().join('_');
+            const messagesRef = collection(db, "chats", chatId, "messages");
+            const q = query(messagesRef, orderBy("timestamp", "asc"));
+
+            chatUnsubscribe = onSnapshot(q, (snapshot) => {
+                const messageListEl = document.getElementById('message-list');
+                messageListEl.innerHTML = '';
+                snapshot.forEach(doc => {
+                    renderMessage(doc.data());
+                });
+                // 滚动到底部
+                messageListEl.scrollTop = messageListEl.scrollHeight;
+            });
+        };
+        window.openChat = openChat;
+
+        const renderMessage = (msg) => {
+            const messageListEl = document.getElementById('message-list');
+            const isMe = msg.senderId === currentUser.uid;
+            
+            const msgWrapper = document.createElement('div');
+            msgWrapper.className = `flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`;
+            
+            const msgBubble = document.createElement('div');
+            msgBubble.className = `max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-2xl ${isMe ? 'bg-[var(--md-sys-color-primary)] text-white rounded-br-none' : 'bg-[var(--md-sys-color-surface-variant)] text-[var(--md-sys-color-on-surface-variant)] rounded-bl-none'}`;
+            msgBubble.textContent = msg.text;
+
+            msgWrapper.appendChild(msgBubble);
+            messageListEl.appendChild(msgWrapper);
+        };
+        
+        const sendMessage = async () => {
+            const { db, collection, addDoc, serverTimestamp } = window.firebase;
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+
+            if (!text || !currentChatFriendId) return;
+
+            const chatId = [currentUser.uid, currentChatFriendId].sort().join('_');
+            const messagesRef = collection(db, "chats", chatId, "messages");
+            
             try {
-                // Add message to the messages subcollection
-                const messagesColRef = collection(db, `chats/${currentChatId}/messages`);
-                await addDoc(messagesColRef, {
+                await addDoc(messagesRef, {
                     text: text,
-                    senderUid: currentUser.uid,
+                    senderId: currentUser.uid,
+                    receiverId: currentChatFriendId,
                     timestamp: serverTimestamp()
                 });
-
-                // Also update the chat document to ensure it exists and has participants
-                // This is useful for security rules and querying chats.
-                const chatDocRef = doc(db, "chats", currentChatId);
-                await setDoc(chatDocRef, {
-                    participants: currentChatId.split('_'),
-                    lastMessage: text,
-                    lastUpdate: serverTimestamp()
-                }, { merge: true });
-
+                input.value = '';
+                input.focus();
             } catch (error) {
-                console.error("Error sending message:", error);
-                showToast("消息发送失败。");
-                messageInput.value = text; // Restore input on failure
+                console.error("发送消息失败: ", error);
+                alert('消息发送失败，请重试。');
+            }
+        };
+        window.sendMessage = sendMessage;
+
+        // 监听回车键发送消息
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
 
